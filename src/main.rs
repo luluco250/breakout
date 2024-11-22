@@ -32,13 +32,12 @@ fn main() {
     let text_width = rl.begin_drawing(&thread).measure_text(text, font_size);
     let mut rng = rand::thread_rng();
     let color_dist = Uniform::from(0..255);
-
-    fn random_color(mut rng: &mut ThreadRng, dist: &Uniform<u8>) -> Color {
-        let r = dist.sample(&mut rng);
-        let g = dist.sample(&mut rng);
-        let b = dist.sample(&mut rng);
+    let mut random_color = || {
+        let r = color_dist.sample(&mut rng);
+        let g = color_dist.sample(&mut rng);
+        let b = color_dist.sample(&mut rng);
         Color::new(r, g, b, 255)
-    }
+    };
 
     while !rl.window_should_close() {
         let dt = rl.get_frame_time();
@@ -49,12 +48,12 @@ fn main() {
 
         if x < 0 || x + text_width > config.width.into() {
             vel_x = -vel_x;
-            color = random_color(&mut rng, &color_dist);
+            color = random_color();
         }
 
         if y < 0 || y + font_size > config.height.into() {
             vel_y = -vel_y;
-            color = random_color(&mut rng, &color_dist);
+            color = random_color();
         }
 
         x += (vel_x as f32 * dt).round() as i32;
